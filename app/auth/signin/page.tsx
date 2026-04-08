@@ -18,8 +18,11 @@ import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import { useForm } from "@tanstack/react-form";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const formSchema = z.object({
@@ -30,16 +33,42 @@ const formSchema = z.object({
 type SocialProvider = "google" | "github";
 
 export default function LoginForm() {
+  const router = useRouter();
   const [pendingProvider, setPendingProvider] = useState<SocialProvider | null>(
     null,
   );
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const form = useForm({
     defaultValues: { email: "", password: "" },
     validators: {
       onChange: formSchema,
     },
-    onSubmit: async ({ value }) => {},
+    onSubmit: async ({ value }) => {
+      await authClient.signIn.email(
+        {
+          email: value.email,
+          password: value.password,
+          callbackURL: "/",
+        },
+        {
+          onRequest: (ctx) => {
+            setIsLoading(true);
+          },
+          onSuccess: (ctx) => {
+            setIsLoading(false);
+            toast.success("Account created successfully!");
+            router.push("/");
+          },
+          onError: (ctx) => {
+            setIsLoading(false);
+            // todo: be careful -> server side errors should not exposed here.
+            toast.error(ctx.error.message || "Registration failed.");
+          },
+        },
+      );
+    },
   });
 
   return (
@@ -51,10 +80,10 @@ export default function LoginForm() {
             className="mx-auto w-10 h-10"
             height={40}
             width={40}
-            alt="ConversionGPT"
+            alt="CodersGPT"
           />
           <CardTitle className="font-semibold text-[#ececec] text-[32px] tracking-tight">
-            Log in ConversionGPT
+            Log in CodersGPT
           </CardTitle>
           <CardDescription className="mx-auto max-w-80 text-[#b4b4b4] text-[15px] leading-relaxed">
             You&apos;ll get smarter responses and can upload files, images, and
@@ -200,7 +229,7 @@ export default function LoginForm() {
                     className="bg-[#ececec] hover:bg-white disabled:hover:bg-[#ececec] disabled:opacity-50 mt-2 rounded-full w-full h-13 font-semibold text-[16px] text-black active:scale-[0.98] disabled:cursor-not-allowed"
                     disabled={!canSubmit || !isDirty}
                   >
-                    {isSubmitting ? (
+                    {isSubmitting || isLoading ? (
                       <Loader2 className="size-5 animate-spin" />
                     ) : (
                       "Continue"

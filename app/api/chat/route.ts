@@ -3,7 +3,7 @@ import { agent } from "./graph";
 
 export async function POST(request: Request) {
   const result = await agent.invoke({
-    messages: [new HumanMessage("hi, how are you?")],
+    messages: [new HumanMessage("hi, greet me. I am kartik Mishra")],
   });
 
   for (const message of result.messages) {

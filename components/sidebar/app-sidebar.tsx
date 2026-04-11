@@ -1,25 +1,23 @@
-import { Search, LayoutGrid, Plus, Loader2 } from "lucide-react";
-
+import { LayoutGrid, Loader2, Plus, Search } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
   SidebarGroup,
+  SidebarHeader,
   SidebarMenu,
-  SidebarMenuItem,
   SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 
-import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { SidebarFooterComponent } from "./sidebar-footer";
-
 import Link from "next/link";
-import ThreadsLists from "./threads-list";
+import { SidebarFooterComponent } from "./sidebar-footer";
 import { Suspense } from "react";
+import ThreadsLists from "./threads-list";
+import { cn } from "@/lib/utils";
 
 export async function AppSidebar({
   ...props
@@ -31,7 +29,7 @@ export async function AppSidebar({
       {...props}
     >
       <SidebarHeader className="px-2 pt-3.5">
-        <div className="flex items-center justify-between group-data-[collapsible=icon]:justify-center">
+        <div className="flex justify-between group-data-[collapsible=icon]:justify-center items-center">
           <div className="flex items-center gap-2.5">
             <Image
               src="/logo-white.png"
@@ -43,34 +41,38 @@ export async function AppSidebar({
             />
           </div>
           <div className="group-data-[collapsible=icon]:hidden">
-            <SidebarTrigger className="hover:bg-[#2f2f2f] text-[#b4b4b4] h-8 w-8 transition-colors" />
+            <SidebarTrigger className="hover:bg-[#2f2f2f] w-8 h-8 text-[#b4b4b4] transition-colors" />
           </div>
         </div>
       </SidebarHeader>
 
       {/* REMOVED group-data-[collapsible=icon]:hidden from SidebarContent */}
-      <SidebarContent className="px-1 mt-2">
+      <SidebarContent className="mt-2 px-1">
         <SidebarGroup className="p-0">
           <SidebarMenu className="gap-0">
             {[
               { title: "New chat", icon: Plus, href: "/" },
               { title: "Search", icon: Search, href: "/" },
-              { title: "Images", icon: LayoutGrid, href: "/" },
+              {
+                title: "Images",
+                icon: LayoutGrid,
+                href: "/",
+              },
             ].map((item) => (
               <SidebarMenuItem
                 key={item.title}
-                className="flex justify-cente relative"
+                className="relative flex justify-cente"
               >
                 <SidebarMenuButton
                   tooltip={item.title}
                   className={cn(
-                    "h-9 transition-colors text-[#ececec] hover:bg-[#2f2f2f] data-[state=open]:bg-[#2f2f2f]",
+                    "data-[state=open]:bg-[#2f2f2f] hover:bg-[#2f2f2f] h-9 text-[#ececec] transition-colors",
                     // Centering logic for collapsed state
                     "group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0",
                   )}
                 >
-                  <item.icon className="h-4.5 w-4.5 shrink-0" />
-                  <span className="ml-3 text-[14px] font-normal group-data-[collapsible=icon]:hidden">
+                  <item.icon className="w-4.5 h-4.5 shrink-0" />
+                  <span className="group-data-[collapsible=icon]:hidden ml-3 font-normal text-[14px]">
                     {item.title}
                   </span>
                   <Link
@@ -84,7 +86,7 @@ export async function AppSidebar({
         </SidebarGroup>
 
         {/* <Suspense fallback={<Loader2 />}> */}
-          <ThreadsLists />
+        <ThreadsLists />
         {/* </Suspense> */}
       </SidebarContent>
 

@@ -4,6 +4,7 @@ import "streamdown/styles.css";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import type { Metadata } from "next";
+import { QueryProvider } from "./query-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -81,8 +82,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster />
+          <QueryProvider>
+            {children}
+            <Toaster />
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>
